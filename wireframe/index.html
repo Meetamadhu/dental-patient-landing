@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wireframe — Patient Booking Landing Page</title>
+  <style>
+    :root {
+      --line: #9aa3ad;
+      --muted: #6b7280;
+      --bg: #f3f4f6;
+      --box: #fff;
+      --accent: #374151;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--bg);
+      line-height: 1.4;
+      padding: 24px 16px 80px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 18px; margin-bottom: 8px; font-family: system-ui, sans-serif; }
+    .meta { color: var(--muted); margin-bottom: 28px; font-family: system-ui, sans-serif; font-size: 14px; }
+    .note {
+      background: #fffbeb;
+      border: 1px dashed #d97706;
+      padding: 12px 14px;
+      margin-bottom: 24px;
+      font-family: system-ui, sans-serif;
+      font-size: 13px;
+    }
+    .device {
+      border: 2px solid var(--line);
+      background: var(--box);
+      max-width: 390px;
+      margin: 0 auto 40px;
+    }
+    .device.desktop { max-width: 100%; }
+    .label {
+      background: #e5e7eb;
+      border-bottom: 1px solid var(--line);
+      padding: 6px 10px;
+      font-family: system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .frame { border: 1px dashed var(--line); margin: 8px; padding: 10px; position: relative; }
+    .frame::before {
+      content: attr(data-name);
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      background: #fff;
+      color: var(--muted);
+      padding: 0 4px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row.between { justify-content: space-between; }
+    .block {
+      border: 1px solid var(--line);
+      background: #fafafa;
+      padding: 8px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .cta {
+      border: 2px solid #111;
+      background: #111;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .cta.ghost { background: #fff; color: #111; }
+    .badge { border: 1px solid var(--line); padding: 4px 6px; font-size: 10px; }
+    .hero-img {
+      height: 140px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      position: relative;
+      padding: 0;
+    }
+    .hero-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-img .cap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 4px 6px;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      font-size: 9px;
+      font-family: system-ui, sans-serif;
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .service-thumb {
+      width: 100%;
+      height: 64px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid var(--line);
+    }
+    .block.has-img {
+      padding: 0;
+      overflow: hidden;
+      text-align: left;
+    }
+    .block.has-img .cap-pad {
+      padding: 8px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .field {
+      border: 1px solid var(--line);
+      padding: 8px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      text-align: left;
+    }
+    .stars { letter-spacing: 2px; }
+    .grid-3 { display: grid; gap: 8px; }
+    .desktop .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .desktop .hero-split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; }
+    .desktop .hero-img { height: 220px; }
+    .spacer { height: 8px; }
+    .annotation {
+      margin-top: 6px;
+      color: #b45309;
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+    }
+    .flow {
+      font-family: system-ui, sans-serif;
+      font-size: 13px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 16px;
+      margin-bottom: 32px;
+    }
+    .flow ol { padding-left: 18px; }
+    .flow li { margin: 6px 0; }
+    h2 { font-family: system-ui, sans-serif; font-size: 15px; margin: 28px 0 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Wireframe v1 — New Patient Booking Landing</h1>
+    <p class="meta">Mobile-first · Single CTA · Booking + lead capture · Approve structure before brand assets</p>
+
+    <div class="note">
+      <strong>Approval ask:</strong> Confirm section order, form fields, and that the booking form stays visible (hero on mobile → sticky bar + dedicated section). Brand colours, logo, and real reviews will replace placeholders after kickoff.
+    </div>
+
+    <div class="flow">
+      <strong>Conversion flow</strong>
+      <ol>
+        <li>Land → see brand + promise + trust badges + primary CTA</li>
+        <li>Tap CTA → scroll/focus to booking form (name, phone, email, treatment, preferred time)</li>
+        <li>Submit → route into scheduling software; fire GA/GTM <code>form_submit</code></li>
+        <li>Abandon mid-form → capture partial lead (name/phone when available) for front-desk follow-up</li>
+        <li>Phone tap anywhere → fire <code>phone_click</code> event</li>
+      </ol>
+    </div>
+
+    <h2>Mobile (primary)</h2>
+    <div class="device">
+      <div class="label">375px — first viewport</div>
+      <div class="frame" data-name="Header">
+        <div class="row between">
+          <div class="block" style="flex:1">[LOGO / PRACTICE NAME]</div>
+          <div class="block">☎ Call</div>
+        </div>
+      </div>
+      <div class="frame" data-name="Hero">
+        <div class="block" style="text-align:left; margin-bottom:8px">BRAND NAME (hero-level)</div>
+        <div class="block" style="text-align:left; margin-bottom:6px">Headline — one clear promise</div>
+        <div class="block" style="text-align:left; margin-bottom:8px">One supporting sentence</div>
+        <div class="cta">Book your visit →</div>
+        <div class="annotation">↑ Single primary CTA (no competing buttons)</div>
+        <div class="spacer"></div>
+        <div class="row" style="flex-wrap:wrap; gap:6px">
+          <span class="badge">★ 4.9 Google</span>
+          <span class="badge">Same-week openings</span>
+          <span class="badge">Specialist chairs</span>
+        </div>
+        <div class="annotation">↑ Above-the-fold trust badges</div>
+        <div class="spacer"></div>
+        <div class="hero-img">
+          <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=70" alt="Dental clinic treatment room" width="800" height="280" />
+          <span class="cap">Full-bleed clinic / smile atmosphere</span>
+        </div>
+      </div>
+      <div class="frame" data-name="Booking form">
+        <div class="block" style="margin-bottom:8px; text-align:left">Reserve your chair</div>
+        <div class="field">Full name *</div>
+        <div class="field">Phone *</div>
+        <div class="field">Email *</div>
+        <div class="field">Treatment interest ▾</div>
+        <div class="field">Preferred time ▾</div>
+        <div class="cta">Request appointment</div>
+        <div class="annotation">Essentials only · plugs into scheduling · partial save on blur/exit</div>
+      </div>
+      <div class="frame" data-name="Services">
+        <div class="block" style="margin-bottom:8px">Core treatments — scannable</div>
+        <div class="grid-3">
+          <div class="block has-img">
+            <img class="service-thumb" src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=400&q=70" alt="Dental implants" width="400" height="128" />
+            <div class="cap-pad">Implants<br/><small>1-line benefit</small></div>
+          </div>
+          <div class="block has-img">
+            <img class="service-thumb" src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=400&q=70" alt="Invisalign aligners" width="400" height="128" />
+            <div class="cap-pad">Invisalign<br/><small>1-line benefit</small></div>
+          </div>
+          <div class="block has-img">
+            <img class="service-thumb" src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=400&q=70" alt="Cosmetic dentistry smile" width="400" height="128" />
+            <div class="cap-pad">Cosmetic<br/><small>1-line benefit</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="frame" data-name="Testimonials">
+        <div class="block" style="margin-bottom:8px">Patient stories</div>
+        <div class="row" style="margin-bottom:8px">
+          <img class="avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=96&q=70" alt="Patient photo" width="96" height="96" />
+          <div style="flex:1">
+            <div class="stars">★★★★★</div>
+            <div class="block" style="text-align:left; margin-top:4px">Short quote</div>
+            <div style="margin-top:4px; color:var(--muted)">— Maya R., implants</div>
+          </div>
+        </div>
+        <div class="row">
+          <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=96&q=70" alt="Patient photo" width="96" height="96" />
+          <div style="flex:1">
+            <div class="stars">★★★★★</div>
+            <div class="block" style="text-align:left; margin-top:4px">Short quote</div>
+            <div style="margin-top:4px; color:var(--muted)">— Daniel K., Invisalign</div>
+          </div>
+        </div>
+      </div>
+      <div class="frame" data-name="Closing CTA">
+        <div class="block" style="margin-bottom:8px">Ready when you are</div>
+        <div class="cta">Book your visit →</div>
+        <div class="block" style="margin-top:8px">or call [phone]</div>
+      </div>
+      <div class="frame" data-name="Footer">
+        <div class="block">Address · Hours · Privacy · Practice info</div>
+      </div>
+    </div>
+
+    <h2>Desktop adaptation</h2>
+    <div class="device desktop">
+      <div class="label">1200px — same content, two-column hero</div>
+      <div class="frame" data-name="Header">
+        <div class="row between">
+          <div class="block">[LOGO]</div>
+          <div class="row">
+            <div class="block">☎ Phone</div>
+            <div class="cta" style="padding:8px 16px">Book your visit</div>
+          </div>
+        </div>
+      </div>
+      <div class="frame" data-name="Hero + Form">
+        <div class="hero-split">
+          <div>
+            <div class="block" style="text-align:left; margin-bottom:8px">BRAND</div>
+            <div class="block" style="text-align:left; margin-bottom:6px">Headline</div>
+            <div class="block" style="text-align:left; margin-bottom:8px">Support</div>
+            <div class="row" style="margin-bottom:8px">
+              <span class="badge">★ 4.9</span>
+              <span class="badge">Same-week</span>
+              <span class="badge">Specialists</span>
+            </div>
+            <div class="hero-img">
+              <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1000&q=70" alt="Dental clinic atmosphere" width="1000" height="400" />
+              <span class="cap">Atmosphere image (full-bleed plane)</span>
+            </div>
+          </div>
+          <div>
+            <div class="block" style="margin-bottom:8px">Booking panel (always visible)</div>
+            <div class="field">Name</div>
+            <div class="field">Phone</div>
+            <div class="field">Email</div>
+            <div class="field">Treatment</div>
+            <div class="field">Preferred time</div>
+            <div class="cta">Request appointment</div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation" style="padding:0 8px 12px">Services → Testimonials → Closing CTA → Footer (same as mobile)</div>
+    </div>
+
+    <div class="note">
+      Reply with approval or change requests (section order, form fields, clinic name placeholder). High-fidelity design and WordPress theme are ready in <code>/preview</code> and <code>/wp-theme</code> for final edits once approved.
+    </div>
+  </div>
+</body>
+</html>

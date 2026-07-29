@@ -1,0 +1,16 @@
+<?php
+/**
+ * Theme Name: Patient Booking Landing
+ * Theme URI: https://example.com/patient-booking
+ * Description: Purpose-built conversion landing page for new-patient and specialist dental bookings. Edit copy, phone, colours, and GTM ID in Appearance → Customize.
+ * Author: Freelancer Delivery
+ * Version: 1.0.0
+ * Requires at least: 6.0
+ * Tested up to: 6.7
+ * Requires PHP: 7.4
+ * Text Domain: patient-booking
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}

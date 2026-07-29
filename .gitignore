@@ -1,0 +1,19 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies / build
+node_modules/
+dist/
+.cache/
+
+# WordPress (if ever installed locally inside theme)
+*.zip
