@@ -1,8 +1,6 @@
 /**
  * Patient Booking Landing — interactions + analytics
- * Works with GA4 (gtag) and/or GTM (dataLayer)
  */
-
 (function () {
   "use strict";
 
@@ -12,14 +10,41 @@
     params = params || {};
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(Object.assign({ event: name }, params));
-
     if (typeof window.gtag === "function") {
       window.gtag("event", name, params);
     }
   }
 
+  /* ---------- Mobile nav ---------- */
+  var toggle = document.querySelector("[data-nav-toggle]");
+  var nav = document.querySelector("[data-primary-nav]");
+  var backdrop = document.querySelector("[data-nav-backdrop]");
+
+  function setNav(open) {
+    if (!toggle || !nav) return;
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    nav.classList.toggle("is-open", open);
+    document.body.classList.toggle("nav-open", open);
+    if (backdrop) {
+      if (open) backdrop.removeAttribute("hidden");
+      else backdrop.setAttribute("hidden", "");
+    }
+  }
+
+  if (toggle && nav) {
+    toggle.addEventListener("click", function () {
+      setNav(toggle.getAttribute("aria-expanded") !== "true");
+    });
+    if (backdrop) {
+      backdrop.addEventListener("click", function () { setNav(false); });
+    }
+    nav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () { setNav(false); });
+    });
+  }
+
   /* ---------- Reveal on scroll ---------- */
-  var revealEls = document.querySelectorAll(".reveal, .service-tile, .testimonial-card, .service-item, .testimonial, .stat-item");
+  var revealEls = document.querySelectorAll(".reveal, .service-tile, .testimonial-card, .stat-item");
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
       function (entries) {
@@ -30,15 +55,11 @@
           }
         });
       },
-      { threshold: 0.18, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.16, rootMargin: "0px 0px -40px 0px" }
     );
-    revealEls.forEach(function (el) {
-      io.observe(el);
-    });
+    revealEls.forEach(function (el) { io.observe(el); });
   } else {
-    revealEls.forEach(function (el) {
-      el.classList.add("is-in");
-    });
+    revealEls.forEach(function (el) { el.classList.add("is-in"); });
   }
 
   /* ---------- Scroll depth ---------- */
@@ -58,20 +79,16 @@
     });
   }
   var scrollTick = false;
-  window.addEventListener(
-    "scroll",
-    function () {
-      if (scrollTick) return;
-      scrollTick = true;
-      window.requestAnimationFrame(function () {
-        onScrollDepth();
-        scrollTick = false;
-      });
-    },
-    { passive: true }
-  );
+  window.addEventListener("scroll", function () {
+    if (scrollTick) return;
+    scrollTick = true;
+    window.requestAnimationFrame(function () {
+      onScrollDepth();
+      scrollTick = false;
+    });
+  }, { passive: true });
 
-  /* ---------- Phone + CTA clicks ---------- */
+  /* ---------- Clicks ---------- */
   document.querySelectorAll('a[href^="tel:"]').forEach(function (link) {
     link.addEventListener("click", function () {
       pushEvent("phone_click", {
@@ -90,7 +107,6 @@
     });
   });
 
-  /* Social click tracking */
   document.querySelectorAll("[data-social]").forEach(function (link) {
     link.addEventListener("click", function () {
       pushEvent("social_click", {
@@ -100,24 +116,36 @@
     });
   });
 
-  /* ---------- Forms (mobile + desktop may both exist; wire each) ---------- */
-  var forms = document.querySelectorAll("[data-booking-form]");
-  var formStarted = false;
+  /* ---------- Success modal ---------- */
+  var modal = document.querySelector("[data-success-modal]");
+  function showSuccess() {
+    if (!modal) return;
+    modal.removeAttribute("hidden");
+    document.body.classList.add("nav-open");
+  }
+  function hideSuccess() {
+    if (!modal) return;
+    modal.setAttribute("hidden", "");
+    document.body.classList.remove("nav-open");
+  }
+  if (modal) {
+    var closeBtn = modal.querySelector("[data-success-close]");
+    if (closeBtn) closeBtn.addEventListener("click", hideSuccess);
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) hideSuccess();
+    });
+  }
 
-  forms.forEach(function (form) {
+  /* ---------- Contact / booking form (3 fields) ---------- */
+  document.querySelectorAll("[data-contact-form]").forEach(function (form) {
     var status = form.querySelector("[data-form-status]");
-    var fields = {
-      name: form.querySelector('[name="full_name"]'),
-      phone: form.querySelector('[name="phone"]'),
-      email: form.querySelector('[name="email"]'),
-      treatment: form.querySelector('[name="treatment"]'),
-      preferred_time: form.querySelector('[name="preferred_time"]')
-    };
+    var nameEl = form.querySelector('[name="full_name"]');
+    var phoneEl = form.querySelector('[name="phone"]');
+    var timeEl = form.querySelector('[name="preferred_time"]');
+    var started = false;
 
     function clearErrors() {
-      form.querySelectorAll(".is-invalid").forEach(function (el) {
-        el.classList.remove("is-invalid");
-      });
+      form.querySelectorAll(".is-invalid").forEach(function (el) { el.classList.remove("is-invalid"); });
       form.querySelectorAll(".field-error").forEach(function (el) {
         el.classList.remove("show");
         el.textContent = "";
@@ -128,116 +156,68 @@
       }
     }
 
-    function showFieldError(input, message) {
+    function showErr(input, msg) {
       if (!input) return;
       input.classList.add("is-invalid");
       var err = input.parentElement.querySelector(".field-error");
       if (err) {
-        err.textContent = message;
+        err.textContent = msg;
         err.classList.add("show");
       }
     }
 
-    function validEmail(v) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    }
-
-    function validPhone(v) {
-      var digits = (v || "").replace(/\D/g, "");
-      return digits.length >= 10;
-    }
-
-    function readValues() {
-      return {
-        full_name: (fields.name && fields.name.value || "").trim(),
-        phone: (fields.phone && fields.phone.value || "").trim(),
-        email: (fields.email && fields.email.value || "").trim(),
-        treatment: fields.treatment && fields.treatment.value || "",
-        preferred_time: fields.preferred_time && fields.preferred_time.value || ""
-      };
-    }
-
     function savePartial() {
-      var data = readValues();
+      var data = {
+        full_name: (nameEl && nameEl.value || "").trim(),
+        phone: (phoneEl && phoneEl.value || "").trim(),
+        preferred_time: timeEl && timeEl.value || ""
+      };
       if (!data.full_name && !data.phone) return;
       try {
-        localStorage.setItem(
-          PARTIAL_KEY,
-          JSON.stringify(Object.assign({ saved_at: Date.now() }, data))
-        );
+        localStorage.setItem(PARTIAL_KEY, JSON.stringify(Object.assign({ saved_at: Date.now() }, data)));
       } catch (e) { /* ignore */ }
-
       if (data.full_name && data.phone) {
-        pushEvent("partial_lead", {
-          has_name: true,
-          has_phone: true,
-          treatment: data.treatment || "(none)"
-        });
+        pushEvent("partial_lead", { has_name: true, has_phone: true });
       }
     }
 
-    function restorePartial() {
-      try {
-        var raw = localStorage.getItem(PARTIAL_KEY);
-        if (!raw) return;
-        var data = JSON.parse(raw);
-        if (fields.name && !fields.name.value && data.full_name) fields.name.value = data.full_name;
-        if (fields.phone && !fields.phone.value && data.phone) fields.phone.value = data.phone;
-        if (fields.email && !fields.email.value && data.email) fields.email.value = data.email;
-        if (fields.treatment && !fields.treatment.value && data.treatment) fields.treatment.value = data.treatment;
-        if (fields.preferred_time && !fields.preferred_time.value && data.preferred_time) {
-          fields.preferred_time.value = data.preferred_time;
-        }
-      } catch (e) { /* ignore */ }
-    }
+    try {
+      var raw = localStorage.getItem(PARTIAL_KEY);
+      if (raw) {
+        var saved = JSON.parse(raw);
+        if (nameEl && !nameEl.value && saved.full_name) nameEl.value = saved.full_name;
+        if (phoneEl && !phoneEl.value && saved.phone) phoneEl.value = saved.phone;
+        if (timeEl && !timeEl.value && saved.preferred_time) timeEl.value = saved.preferred_time;
+      }
+    } catch (e) { /* ignore */ }
 
-    restorePartial();
-
-    form.addEventListener(
-      "focusin",
-      function () {
-        if (!formStarted) {
-          formStarted = true;
-          pushEvent("form_start", { form_id: "booking" });
-        }
-      },
-      true
-    );
+    form.addEventListener("focusin", function () {
+      if (!started) {
+        started = true;
+        pushEvent("form_start", { form_id: "contact" });
+      }
+    }, true);
 
     ["change", "blur"].forEach(function (evt) {
       form.addEventListener(evt, function (e) {
         if (e.target && e.target.matches("input, select")) savePartial();
       }, true);
     });
-
     window.addEventListener("pagehide", savePartial);
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       clearErrors();
-      var data = readValues();
-      var ok = true;
 
-      if (!data.full_name || data.full_name.length < 2) {
-        showFieldError(fields.name, "Please enter your full name.");
-        ok = false;
-      }
-      if (!validPhone(data.phone)) {
-        showFieldError(fields.phone, "Enter a valid mobile number.");
-        ok = false;
-      }
-      if (!validEmail(data.email)) {
-        showFieldError(fields.email, "Enter a valid email address.");
-        ok = false;
-      }
-      if (!data.treatment) {
-        showFieldError(fields.treatment, "Select a treatment interest.");
-        ok = false;
-      }
-      if (!data.preferred_time) {
-        showFieldError(fields.preferred_time, "Select a preferred time.");
-        ok = false;
-      }
+      var data = {
+        full_name: (nameEl && nameEl.value || "").trim(),
+        phone: (phoneEl && phoneEl.value || "").trim(),
+        preferred_time: timeEl && timeEl.value || ""
+      };
+      var ok = true;
+      if (data.full_name.length < 2) { showErr(nameEl, "Please enter your full name."); ok = false; }
+      if ((data.phone.replace(/\D/g, "")).length < 10) { showErr(phoneEl, "Enter a valid mobile number."); ok = false; }
+      if (!data.preferred_time) { showErr(timeEl, "Select a preferred time."); ok = false; }
 
       if (!ok) {
         if (status) {
@@ -253,126 +233,23 @@
         page: window.location.pathname
       });
 
-      function onSuccess() {
-        try { localStorage.removeItem(PARTIAL_KEY); } catch (e) { /* ignore */ }
+      function success() {
+        try { localStorage.removeItem(PARTIAL_KEY); } catch (err) { /* ignore */ }
         pushEvent("generate_lead", {
-          form_id: "booking",
-          treatment: data.treatment,
+          form_id: "contact",
           preferred_time: data.preferred_time
         });
-        pushEvent("form_submit", {
-          form_id: "booking",
-          treatment: data.treatment
-        });
-        if (status) {
-          status.className = "form-status is-success";
-          status.textContent = "You’re on our list. A team member will confirm your chair shortly.";
-        }
-        form.reset();
-      }
-
-      function onFail() {
-        if (status) {
-          status.className = "form-status is-error";
-          status.textContent = "Something went wrong. Please call us and we’ll book you in.";
-        }
-      }
-
-      /* Hook: replace endpoint with your scheduling/CRM webhook or WP admin-ajax URL */
-      if (!endpoint) {
-        console.info("[Booking] Demo submit — set data-endpoint to your scheduling software webhook.", payload);
-        onSuccess();
-        return;
-      }
-
-      fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
-        credentials: "same-origin"
-      })
-        .then(function (res) {
-          if (!res.ok) throw new Error("bad status");
-          return res.json().catch(function () { return {}; });
-        })
-        .then(onSuccess)
-        .catch(onFail);
-    });
-  });
-
-  /* ---------- Contact form ---------- */
-  document.querySelectorAll("[data-contact-form]").forEach(function (form) {
-    var status = form.querySelector("[data-form-status]");
-    var nameEl = form.querySelector('[name="full_name"]');
-    var emailEl = form.querySelector('[name="email"]');
-    var phoneEl = form.querySelector('[name="phone"]');
-    var messageEl = form.querySelector('[name="message"]');
-    var started = false;
-
-    form.addEventListener("focusin", function () {
-      if (!started) {
-        started = true;
-        pushEvent("form_start", { form_id: "contact" });
-      }
-    }, true);
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      form.querySelectorAll(".is-invalid").forEach(function (el) { el.classList.remove("is-invalid"); });
-      form.querySelectorAll(".field-error").forEach(function (el) {
-        el.classList.remove("show");
-        el.textContent = "";
-      });
-      if (status) {
-        status.className = "form-status";
-        status.textContent = "";
-      }
-
-      function showErr(input, msg) {
-        if (!input) return;
-        input.classList.add("is-invalid");
-        var err = input.parentElement.querySelector(".field-error");
-        if (err) {
-          err.textContent = msg;
-          err.classList.add("show");
-        }
-      }
-
-      var data = {
-        full_name: (nameEl && nameEl.value || "").trim(),
-        email: (emailEl && emailEl.value || "").trim(),
-        phone: (phoneEl && phoneEl.value || "").trim(),
-        message: (messageEl && messageEl.value || "").trim()
-      };
-      var ok = true;
-      if (data.full_name.length < 2) { showErr(nameEl, "Please enter your full name."); ok = false; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { showErr(emailEl, "Enter a valid email."); ok = false; }
-      if ((data.phone.replace(/\D/g, "")).length < 10) { showErr(phoneEl, "Enter a valid phone number."); ok = false; }
-      if (data.message.length < 5) { showErr(messageEl, "Please add a short message."); ok = false; }
-
-      if (!ok) {
-        if (status) {
-          status.className = "form-status is-error";
-          status.textContent = "Please check the highlighted fields and try again.";
-        }
-        return;
-      }
-
-      var endpoint = form.getAttribute("data-endpoint") || "";
-      var payload = Object.assign({}, data, { source: "contact_form", page: window.location.pathname });
-
-      function success() {
-        pushEvent("generate_lead", { form_id: "contact" });
         pushEvent("form_submit", { form_id: "contact" });
         if (status) {
           status.className = "form-status is-success";
-          status.textContent = "Thanks — we’ll get back to you shortly.";
+          status.textContent = "Request received — check the confirmation popup.";
         }
         form.reset();
+        showSuccess();
       }
 
       if (!endpoint) {
-        console.info("[Contact] Demo submit — set data-endpoint for production.", payload);
+        console.info("[Booking] Demo submit", payload);
         success();
         return;
       }
