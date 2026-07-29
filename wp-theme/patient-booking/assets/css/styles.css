@@ -1067,7 +1067,7 @@ a:hover { color: var(--brand-teal-dark); }
 .site-footer__bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(0, 0, 0, 0.22);
-  padding: 1rem 0;
+  padding: 1rem 0 1.35rem;
 }
 
 .site-footer__bottom-inner {
@@ -1087,6 +1087,17 @@ a:hover { color: var(--brand-teal-dark); }
   font-weight: 600;
 }
 .site-footer__bottom a:hover { color: #fff; }
+
+.site-footer__purpose {
+  width: min(100% - 2rem, var(--max));
+  margin: 0.85rem auto 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 48rem;
+}
 
 /* ---------- Motion ---------- */
 .reveal {

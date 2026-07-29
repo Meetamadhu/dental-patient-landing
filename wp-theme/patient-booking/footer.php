@@ -42,6 +42,9 @@
       <span>&copy; <?php echo esc_html(gmdate('Y')); ?> <?php echo esc_html(pb_get('practice_name')); ?>. <?php esc_html_e('All rights reserved.', 'patient-booking'); ?></span>
       <a href="#top"><?php esc_html_e('Back to top ↑', 'patient-booking'); ?></a>
     </div>
+    <p class="site-footer__purpose">
+      <?php esc_html_e('This landing page was designed as part of a contest entry—to show how a purpose-built dental site can turn visitors into booked patients with clear trust signals, scannable specialist care, and a contact path the front desk can act on.', 'patient-booking'); ?>
+    </p>
   </div>
 </footer>
 <?php wp_footer(); ?>

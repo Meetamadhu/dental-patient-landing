@@ -17,3 +17,4 @@ dist/
 
 # WordPress (if ever installed locally inside theme)
 *.zip
+.vercel
