@@ -654,9 +654,10 @@ a:hover { color: var(--brand-teal-dark); }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 3px solid var(--brand-orange);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 5px solid var(--brand-orange);
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(243, 156, 18, 0.18);
+  box-shadow: 0 10px 28px rgba(45, 52, 54, 0.12);
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.7s var(--ease), transform 0.7s var(--ease), background 0.2s ease, box-shadow 0.2s ease;
@@ -667,7 +668,26 @@ a:hover { color: var(--brand-teal-dark); }
 }
 .service-tile:hover {
   background: var(--brand-teal-deep);
-  box-shadow: 0 12px 28px rgba(243, 156, 18, 0.28);
+  box-shadow: 0 14px 32px rgba(45, 52, 54, 0.16);
+}
+
+.services-grid > .service-tile:nth-child(1) {
+  border-left-color: var(--brand-orange);
+}
+.services-grid > .service-tile:nth-child(1) .service-tile__image {
+  border-bottom-color: var(--brand-orange);
+}
+.services-grid > .service-tile:nth-child(2) {
+  border-left-color: #fff;
+}
+.services-grid > .service-tile:nth-child(2) .service-tile__image {
+  border-bottom-color: rgba(255, 255, 255, 0.85);
+}
+.services-grid > .service-tile:nth-child(3) {
+  border-left-color: #1f8f4e;
+}
+.services-grid > .service-tile:nth-child(3) .service-tile__image {
+  border-bottom-color: #1f8f4e;
 }
 
 .service-tile__image {
@@ -763,13 +783,30 @@ a:hover { color: var(--brand-teal-dark); }
 .testimonial-card {
   background: var(--brand-white);
   overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(45, 52, 54, 0.08);
+  border-left: 5px solid var(--brand-orange);
+  box-shadow: 0 10px 28px rgba(45, 52, 54, 0.08);
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+  transition: opacity 0.75s var(--ease), transform 0.75s var(--ease), box-shadow 0.2s ease;
 }
 .testimonial-card.is-in {
   opacity: 1;
   transform: none;
+}
+.testimonial-card:hover {
+  box-shadow: 0 14px 32px rgba(45, 52, 54, 0.12);
+}
+
+.testimonial-grid > li:nth-child(1) .testimonial-card {
+  border-left-color: var(--brand-orange);
+}
+.testimonial-grid > li:nth-child(2) .testimonial-card {
+  border-left-color: var(--brand-teal);
+}
+.testimonial-grid > li:nth-child(3) .testimonial-card {
+  border-left-color: #1f8f4e;
 }
 
 .testimonial-card__photo {
