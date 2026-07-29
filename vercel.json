@@ -1,17 +1,7 @@
 {
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
   "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/", "destination": "/preview/index.html" },
-    { "source": "/assets/:path*", "destination": "/preview/assets/:path*" },
-    { "source": "/((?!preview/).*)", "destination": "/preview/$1" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
-    }
-  ]
+  "trailingSlash": false
 }

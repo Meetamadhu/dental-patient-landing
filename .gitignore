@@ -14,6 +14,8 @@ Thumbs.db
 node_modules/
 dist/
 .cache/
+public/
+.vercel
 
 # WordPress (if ever installed locally inside theme)
 *.zip
