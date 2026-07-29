@@ -44,7 +44,7 @@
   }
 
   /* ---------- Reveal on scroll ---------- */
-  var revealEls = document.querySelectorAll(".reveal, .service-tile, .testimonial-card, .stat-item");
+  var revealEls = document.querySelectorAll(".reveal, .service-tile, .testimonial-card, .stat-item, .team-card, .result-card, .video-card, .resource-card");
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
       function (entries) {
@@ -134,6 +134,113 @@
     modal.addEventListener("click", function (e) {
       if (e.target === modal) hideSuccess();
     });
+  }
+
+  /* ---------- Video modal ---------- */
+  var videoModal = document.querySelector("[data-video-modal]");
+  var videoFrame = document.querySelector("[data-video-frame]");
+  function openVideo(url) {
+    if (!videoModal || !videoFrame) return;
+    videoFrame.innerHTML = '<iframe src="' + url + '?autoplay=1" title="Patient story" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+    videoModal.removeAttribute("hidden");
+    document.body.style.overflow = "hidden";
+  }
+  function closeVideo() {
+    if (!videoModal || !videoFrame) return;
+    videoFrame.innerHTML = "";
+    videoModal.setAttribute("hidden", "");
+    document.body.style.overflow = "";
+  }
+  document.querySelectorAll("[data-video]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      openVideo(btn.getAttribute("data-video"));
+      pushEvent("video_play", { video_url: btn.getAttribute("data-video") });
+    });
+  });
+  if (videoModal) {
+    var vClose = videoModal.querySelector("[data-video-close]");
+    if (vClose) vClose.addEventListener("click", closeVideo);
+    videoModal.addEventListener("click", function (e) {
+      if (e.target === videoModal) closeVideo();
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (videoModal && !videoModal.hasAttribute("hidden")) closeVideo();
+    if (modal && !modal.hasAttribute("hidden")) hideSuccess();
+  });
+
+  /* ---------- Live availability widget ---------- */
+  var slotsByDay = {
+    Tue: ["9:00 AM", "10:30 AM", "1:00 PM", "3:30 PM"],
+    Wed: ["8:30 AM", "11:00 AM", "2:00 PM", "4:00 PM"],
+    Thu: ["9:30 AM", "12:00 PM", "2:30 PM", "5:00 PM"],
+    Fri: ["8:00 AM", "10:00 AM", "1:30 PM", "3:00 PM"],
+    Sat: ["9:00 AM", "11:30 AM", "1:00 PM"]
+  };
+  var takenMap = { Tue: ["10:30 AM"], Wed: ["4:00 PM"], Fri: ["8:00 AM"] };
+  var availRoot = document.querySelector("[data-availability]");
+  if (availRoot) {
+    var slotsEl = availRoot.querySelector("[data-availability-slots]");
+    var updatedEl = availRoot.querySelector("[data-availability-updated]");
+    var activeDay = "Tue";
+
+    function mapSlotToPreferred(label) {
+      var hour = parseInt(label, 10);
+      var isPm = /PM/i.test(label);
+      var h24 = isPm ? (hour === 12 ? 12 : hour + 12) : (hour === 12 ? 0 : hour);
+      if (h24 < 12) return "mornings";
+      if (h24 < 17) return "afternoons";
+      return "evenings";
+    }
+
+    function renderSlots(day) {
+      if (!slotsEl) return;
+      slotsEl.innerHTML = "";
+      (slotsByDay[day] || []).forEach(function (label) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "availability-slot";
+        btn.textContent = label;
+        var taken = (takenMap[day] || []).indexOf(label) !== -1;
+        if (taken) {
+          btn.classList.add("is-taken");
+          btn.disabled = true;
+        } else {
+          btn.addEventListener("click", function () {
+            slotsEl.querySelectorAll(".availability-slot").forEach(function (b) {
+              b.classList.remove("is-selected");
+            });
+            btn.classList.add("is-selected");
+            var preferred = mapSlotToPreferred(label);
+            var select = document.querySelector('#preferred_time, [name="preferred_time"]');
+            if (select) select.value = preferred;
+            pushEvent("availability_select", { day: day, time: label, preferred_time: preferred });
+            var contact = document.getElementById("contact");
+            if (contact) contact.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+        slotsEl.appendChild(btn);
+      });
+    }
+
+    availRoot.querySelectorAll("[data-day]").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activeDay = tab.getAttribute("data-day");
+        availRoot.querySelectorAll("[data-day]").forEach(function (t) {
+          t.classList.toggle("is-active", t === tab);
+          t.setAttribute("aria-selected", t === tab ? "true" : "false");
+        });
+        renderSlots(activeDay);
+      });
+    });
+
+    renderSlots(activeDay);
+    if (updatedEl) {
+      setInterval(function () {
+        updatedEl.textContent = "Live · updated " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      }, 60000);
+    }
   }
 
   /* ---------- Contact / booking form (3 fields) ---------- */

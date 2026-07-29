@@ -26,6 +26,9 @@ You can use GTM only, GA4 only, or both.
 | `cta_click` | “Book your visit” clicks | `cta_id` (`header` / `hero` / `closing`), `cta_text` |
 | `scroll_depth` | User reaches 25 / 50 / 75 / 90% | `percent_scrolled` |
 | `partial_lead` | Name + phone saved on abandon/blur | `has_name`, `has_phone`, `treatment` |
+| `social_click` | Social icon clicks | `network` |
+| `availability_select` | Live slot picked in openings widget | `day`, `time`, `preferred_time` |
+| `video_play` | Video testimonial opened | `video_url` |
 
 ---
 

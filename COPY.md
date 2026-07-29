@@ -40,7 +40,7 @@ Takes under 60 seconds · Same-week openings often available
 ## Booking form
 **Section eyebrow:** Reserve your chair  
 **Headline:** Book a new-patient or specialist visit  
-**Supporting:** Tell us what you need and when works. We’ll confirm your appointment and match you to the right clinician.
+**Supporting:** Tell us what you need and when works. We’ll confirm your appointment and match you to the right dentist.
 
 | Field | Label | Placeholder / options |
 |---|---|---|
